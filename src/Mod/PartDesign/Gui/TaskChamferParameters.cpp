@@ -64,6 +64,11 @@ TaskChamferParameters::TaskChamferParameters(ViewProviderDressUp *DressUpView, Q
     ui->checkBoxUseAllEdges->setChecked(useAllEdges);
     ui->buttonRefSel->setEnabled(!useAllEdges);
     ui->listWidgetReferences->setEnabled(!useAllEdges);
+    
+    bool useSurroundedEdges = pcChamfer->UseSurroundedEdges.getValue();
+    ui->checkBoxUseAllEdges->setChecked(useSurroundedEdges);
+    
+    
     QMetaObject::invokeMethod(ui->chamferSize, "setFocus", Qt::QueuedConnection);
 
     std::vector<std::string> strings = pcChamfer->Base.getSubValues();
@@ -87,6 +92,8 @@ TaskChamferParameters::TaskChamferParameters(ViewProviderDressUp *DressUpView, Q
         this, &TaskChamferParameters::onButtonRefSel);
     connect(ui->checkBoxUseAllEdges, &QCheckBox::toggled,
             this, &TaskChamferParameters::onCheckBoxUseAllEdgesToggled);
+    connect(ui->checkBoxUseSurroundedEdges, &QCheckBox::toggled,
+        this, &TaskChamferParameters::onCheckBoxUseSurroundedEdgesToggled);
 
     // Create context menu
     createDeleteAction(ui->listWidgetReferences);
@@ -170,6 +177,14 @@ void TaskChamferParameters::onCheckBoxUseAllEdgesToggled(bool checked)
     pcChamfer->UseAllEdges.setValue(checked);
     pcChamfer->getDocument()->recomputeFeature(pcChamfer);
 }
+
+void TaskChamferParameters::onCheckBoxUseSurroundedEdgesToggled(bool checked)
+{
+    PartDesign::Chamfer* pcChamfer = static_cast<PartDesign::Chamfer*>(DressUpView->getObject());
+    pcChamfer->UseSurroundedEdges.setValue(checked);
+    pcChamfer->getDocument()->recomputeFeature(pcChamfer);
+}
+
 
 void TaskChamferParameters::setButtons(const selectionModes mode)
 {

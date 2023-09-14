@@ -60,6 +60,8 @@ public:
     void getContinuousEdges(Part::TopoShape, std::vector< std::string >&);
     // add argument to return the selected face that edges were derived from
     void getContinuousEdges(Part::TopoShape, std::vector< std::string >&, std::vector< std::string >&);
+    //add argument to only use edges that are surrounded by multiple faces
+    void getContinuousEdges(Part::TopoShape, std::vector< std::string >&, std::vector< std::string >&,bool);
 
     void getAddSubShape(Part::TopoShape &addShape, Part::TopoShape &subShape) override;
 

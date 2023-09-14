@@ -40,6 +40,7 @@ public:
 
     App::PropertyQuantityConstraint Radius;
     App::PropertyBool UseAllEdges;
+    App::PropertyBool UseSurroundedEdges;
 
     /** @name methods override feature */
     //@{

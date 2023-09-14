@@ -42,7 +42,6 @@
 
 #include "FeatureChamfer.h"
 
-
 using namespace PartDesign;
 
 
@@ -127,10 +126,10 @@ App::DocumentObjectExecReturn *Chamfer::execute()
         }
     }
 
-    std::vector<std::string> FaceNames;
+    std::vector < std::string > FaceNames;
 
-    getContinuousEdges(TopShape, SubNames, FaceNames);
-
+    getContinuousEdges(TopShape, SubNames,FaceNames,UseSurroundedEdges.getValue());
+    
     const int chamferType = ChamferType.getValue();
     const double size = Size.getValue();
     const double size2 = Size2.getValue();

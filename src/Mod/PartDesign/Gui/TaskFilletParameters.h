@@ -46,6 +46,7 @@ private Q_SLOTS:
     void onRefDeleted() override;
     void onAddAllEdges();
     void onCheckBoxUseAllEdgesToggled(bool checked);
+    void onCheckBoxUseSurroundedEdgesToggled(bool checked);
 
 protected:
     double getLength() const;

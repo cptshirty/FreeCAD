@@ -1,5 +1,5 @@
+//   Copyright (c) 2008 Werner Mayer <wmayer[at]users.sourceforge.net>     *
 /***************************************************************************
- *   Copyright (c) 2008 Werner Mayer <wmayer[at]users.sourceforge.net>     *
  *                                                                         *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
@@ -38,7 +38,6 @@
 
 #include "FeatureFillet.h"
 
-
 using namespace PartDesign;
 
 
@@ -54,6 +53,7 @@ Fillet::Fillet()
     ADD_PROPERTY_TYPE(UseAllEdges, (false), "Fillet", App::Prop_None,
       "Fillet all edges if true, else use only those edges in Base property.\n"
       "If true, then this overrides any edge changes made to the Base property or in the dialog.\n");
+    ADD_PROPERTY_TYPE(UseSurroundedEdges, (false), "Fillet", App::Prop_None,"Fillet Edges that are surrounded by multiple faces\n");
 }
 
 short Fillet::mustExecute() const
@@ -73,19 +73,24 @@ App::DocumentObjectExecReturn *Fillet::execute()
         return new App::DocumentObjectExecReturn(e.what());
     }
     std::vector<std::string> SubNames = std::vector<std::string>(Base.getSubValues());
-
+    
     if (UseAllEdges.getValue()){
         SubNames.clear();
-        std::string edgeTypeName = Part::TopoShape::shapeName(TopAbs_EDGE); //"Edge"
-        int count = TopShape.countSubElements(edgeTypeName.c_str());
+        std::string EdgeTypeName = Part::TopoShape::shapeName(TopAbs_EDGE); //"edge"
+        int count = TopShape.countSubElements(EdgeTypeName.c_str());
         for (int ii = 0; ii < count; ii++){
-            std::ostringstream edgeName;
-            edgeName << edgeTypeName << ii+1;
-            SubNames.push_back(edgeName.str());
+            std::ostringstream EdgeName;
+            EdgeName << EdgeTypeName << ii+1;
+            SubNames.push_back(EdgeName.str());
         }
     }
 
-    getContinuousEdges(TopShape, SubNames);
+    if (UseSurroundedEdges.getValue()){
+        std::vector < std::string > FaceNames;
+        getContinuousEdges(TopShape, SubNames,FaceNames,true);
+    }
+    else
+        getContinuousEdges(TopShape, SubNames);
 
     double radius = Radius.getValue();
 

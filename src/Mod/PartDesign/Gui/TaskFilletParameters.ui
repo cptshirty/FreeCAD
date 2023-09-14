@@ -58,11 +58,22 @@ click again to end selection</string>
     </layout>
    </item>
    <item>
-    <widget class="QCheckBox" name="checkBoxUseAllEdges">
-     <property name="text">
-      <string>Use All Edges</string>
-     </property>
-    </widget>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QCheckBox" name="checkBoxUseAllEdges">
+       <property name="text">
+            <string>Use All Edges</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="checkBoxUseSurroundedEdges">
+       <property name="text">
+            <string>Use Surounded Edges</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
@@ -78,6 +89,7 @@ click again to end selection</string>
   <tabstop>listWidgetReferences</tabstop>
   <tabstop>filletRadius</tabstop>
   <tabstop>checkBoxUseAllEdges</tabstop>
+  <tabstop>checkBoxUseSurroundedEdges</tabstop>
  </tabstops>
  <resources/>
  <connections/>

@@ -59,6 +59,11 @@ TaskFilletParameters::TaskFilletParameters(ViewProviderDressUp *DressUpView, QWi
     ui->checkBoxUseAllEdges->setChecked(useAllEdges);
     ui->buttonRefSel->setEnabled(!useAllEdges);
     ui->listWidgetReferences->setEnabled(!useAllEdges);
+    
+    bool useSuroundedEdges = pcFillet->UseSurroundedEdges.getValue();
+    ui->checkBoxUseSurroundedEdges->setChecked(useSuroundedEdges);
+    
+    
     double r = pcFillet->Radius.getValue();
 
     ui->filletRadius->setUnit(Base::Unit::Length);
@@ -80,7 +85,9 @@ TaskFilletParameters::TaskFilletParameters(ViewProviderDressUp *DressUpView, QWi
         this, &TaskFilletParameters::onButtonRefSel);
     connect(ui->checkBoxUseAllEdges, &QToolButton::toggled,
         this, &TaskFilletParameters::onCheckBoxUseAllEdgesToggled);
-
+    connect(ui->checkBoxUseSurroundedEdges, &QToolButton::toggled,
+        this, &TaskFilletParameters::onCheckBoxUseSurroundedEdgesToggled);
+    
     // Create context menu
     createDeleteAction(ui->listWidgetReferences);
     connect(deleteAction, &QAction::triggered, this, &TaskFilletParameters::onRefDeleted);
@@ -121,6 +128,13 @@ void TaskFilletParameters::onCheckBoxUseAllEdgesToggled(bool checked)
     ui->buttonRefSel->setEnabled(!checked);
     ui->listWidgetReferences->setEnabled(!checked);
     pcFillet->UseAllEdges.setValue(checked);
+    pcFillet->getDocument()->recomputeFeature(pcFillet);
+}
+
+void TaskFilletParameters::onCheckBoxUseSurroundedEdgesToggled(bool checked)
+{
+    PartDesign::Fillet* pcFillet = static_cast<PartDesign::Fillet*>(DressUpView->getObject());
+    pcFillet->UseSurroundedEdges.setValue(checked);
     pcFillet->getDocument()->recomputeFeature(pcFillet);
 }
 

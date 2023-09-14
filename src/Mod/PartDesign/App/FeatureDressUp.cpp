@@ -105,7 +105,13 @@ void DressUp::getContinuousEdges(Part::TopoShape TopShape, std::vector< std::str
 
 void DressUp::getContinuousEdges(Part::TopoShape TopShape, std::vector< std::string >& SubNames, std::vector< std::string >& FaceNames) {
 
+    getContinuousEdges(TopShape, SubNames, FaceNames,0);
+}
+
+void DressUp::getContinuousEdges(Part::TopoShape TopShape, std::vector< std::string >& SubNames, std::vector< std::string >& FaceNames,bool UseSurroundedEdges) {
+
     TopTools_IndexedMapOfShape mapOfEdges;
+    TopTools_IndexedMapOfShape mapOfCandidateEdges;
     TopTools_IndexedDataMapOfShapeListOfShape mapEdgeFace;
     TopExp::MapShapesAndAncestors(TopShape.getShape(), TopAbs_EDGE, TopAbs_FACE, mapEdgeFace);
     TopExp::MapShapes(TopShape.getShape(), TopAbs_EDGE, mapOfEdges);
@@ -114,11 +120,10 @@ void DressUp::getContinuousEdges(Part::TopoShape TopShape, std::vector< std::str
     while(i < SubNames.size())
     {
         std::string aSubName = static_cast<std::string>(SubNames.at(i));
-
+        
         if (aSubName.compare(0, 4, "Edge") == 0) {
             TopoDS_Edge edge = TopoDS::Edge(TopShape.getSubShape(aSubName.c_str()));
             const TopTools_ListOfShape& los = mapEdgeFace.FindFromKey(edge);
-
             if(los.Extent() != 2)
             {
                 SubNames.erase(SubNames.begin()+i);
@@ -143,15 +148,20 @@ void DressUp::getContinuousEdges(Part::TopoShape TopShape, std::vector< std::str
             TopTools_IndexedMapOfShape mapOfFaces;
             TopExp::MapShapes(face, TopAbs_EDGE, mapOfFaces);
 
+
             for(int j = 1; j <= mapOfFaces.Extent(); ++j) {
                 TopoDS_Edge edge = TopoDS::Edge(mapOfFaces.FindKey(j));
 
+                if(UseSurroundedEdges && !mapOfCandidateEdges.FindIndex(edge))
+                {    
+                    mapOfCandidateEdges.Add(edge);
+                    continue;
+                }
                 int id = mapOfEdges.FindIndex(edge);
 
                 std::stringstream buf;
                 buf << "Edge";
                 buf << id;
-
                 if(std::find(SubNames.begin(),SubNames.end(),buf.str()) == SubNames.end())
                 {
                     SubNames.push_back(buf.str());
